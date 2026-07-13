@@ -11,7 +11,7 @@ import TeacherDashboard from './pages/TeacherDashboard';
 
 
 // =========================================================================
-// 🔒 ROUTE GUARD (ProtectedRoute)
+// ROUTE GUARD (ProtectedRoute)
 // =========================================================================
 // This component intercepts navigation requests to private routes. It checks
 // if the user is authenticated and if their role is permitted to access the page.

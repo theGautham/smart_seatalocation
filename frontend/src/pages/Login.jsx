@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Shield, Users, GraduationCap, Lock, LogIn, AlertCircle } from 'lucide-react';
 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 const Login = () => {
   const { login, user, error, setError } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -46,15 +52,15 @@ const Login = () => {
   };
 
   const getTabLabel = () => {
-    if (activeTab === 'student') return 'Student Name';
-    if (activeTab === 'teacher') return 'Teacher Name';
+    if (activeTab === 'student') return 'Register Number (or Name)';
+    if (activeTab === 'teacher') return 'Employee ID (or Name)';
     return 'Username';
   };
 
   const getTabIcon = () => {
-    if (activeTab === 'student') return <GraduationCap size={18} />;
-    if (activeTab === 'teacher') return <Users size={18} />;
-    return <Shield size={18} />;
+    if (activeTab === 'student') return <GraduationCap size={16} />;
+    if (activeTab === 'teacher') return <Users size={16} />;
+    return <Shield size={16} />;
   };
 
   return (
@@ -63,101 +69,99 @@ const Login = () => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-650/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Main card */}
-      <div className="w-full max-w-md glass glow-card rounded-3xl p-8 relative z-10 shadow-2xl">
-        <div className="flex flex-col items-center mb-8">
+      <Card className="w-full max-w-md glass glow-card relative z-10 shadow-2xl border-slate-800/80 bg-slate-950/40">
+        <CardHeader className="flex flex-col items-center mb-2 text-center pb-2">
           <div className="bg-indigo-600 p-3.5 rounded-2xl text-white shadow-lg shadow-indigo-600/30 mb-4 animate-bounce">
             <Shield size={28} />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-wide text-white">Smart Exam System</h2>
-          <p className="text-slate-400 text-sm mt-1">Seat Allocation & Hall Management</p>
-        </div>
+          <CardTitle className="text-2xl font-extrabold tracking-wide text-white">Smart Exam System</CardTitle>
+          <CardDescription className="text-slate-400 mt-1">Seat Allocation & Hall Management</CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-950/80 border border-slate-800/80 rounded-2xl h-14 p-1 mb-6">
+              <TabsTrigger value="student" className="rounded-xl data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                <div className="flex flex-col items-center gap-1">
+                  <GraduationCap size={14} />
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Student</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger value="teacher" className="rounded-xl data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                <div className="flex flex-col items-center gap-1">
+                  <Users size={14} />
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Teacher</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger value="admin" className="rounded-xl data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                <div className="flex flex-col items-center gap-1">
+                  <Shield size={14} />
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Admin</span>
+                </div>
+              </TabsTrigger>
+            </TabsList>
 
-        {/* Tab triggers */}
-        <div className="grid grid-cols-3 gap-1 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/80 mb-6">
-          {['student', 'teacher', 'admin'].map((role) => (
-            <button
-              key={role}
-              onClick={() => setActiveTab(role)}
-              className={`flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
-                activeTab === role
-                  ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {role === 'student' && <GraduationCap size={16} />}
-              {role === 'teacher' && <Users size={16} />}
-              {role === 'admin' && <Shield size={16} />}
-              <span>{role}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Error message */}
-        {error && (
-          <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-sm mb-6 animate-pulse">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              {getTabLabel()}
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
-                {getTabIcon()}
-              </span>
-              <input
-                type="text"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={`Enter ${getTabLabel().toLowerCase()}`}
-                className="w-full bg-slate-950/60 border border-slate-800 focus:border-indigo-500 rounded-2xl py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-600 focus:ring-1 focus:ring-indigo-500 text-white"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
-                <Lock size={18} />
-              </span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-950/60 border border-slate-800 focus:border-indigo-500 rounded-2xl py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-600 focus:ring-1 focus:ring-indigo-500 text-white"
-                required
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-650 hover:bg-indigo-600 active:scale-[0.98] text-white py-4 rounded-2xl text-sm font-semibold tracking-wide shadow-lg shadow-indigo-600/25 transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none mt-2"
-          >
-            {submitting ? (
-              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <LogIn size={18} />
-                <span>Log In to Portal</span>
-              </>
+            {/* Error message */}
+            {error && (
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-sm mb-6 animate-pulse">
+                <AlertCircle size={16} className="shrink-0" />
+                <span>{error}</span>
+              </div>
             )}
-          </button>
-        </form>
 
-        <div className="mt-8 text-center text-xs text-slate-500 border-t border-slate-800/60 pt-6">
+            <form onSubmit={handleSubmit} className="space-y-5 mt-2">
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{getTabLabel()}</Label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                    {getTabIcon()}
+                  </span>
+                  <Input 
+                    type="text" 
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder={`Enter ${getTabLabel().toLowerCase()}`}
+                    className="pl-10 h-12 bg-slate-950/60 border-slate-800 focus-visible:ring-indigo-500 rounded-2xl text-white placeholder:text-slate-600"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Password</Label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                    <Lock size={16} />
+                  </span>
+                  <Input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="pl-10 h-12 bg-slate-950/60 border-slate-800 focus-visible:ring-indigo-500 rounded-2xl text-white placeholder:text-slate-600"
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                disabled={submitting}
+                className="w-full h-14 mt-6 bg-indigo-650 hover:bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/25 transition-all duration-300"
+              >
+                {submitting ? (
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <LogIn size={18} className="mr-2" />
+                    <span className="font-semibold tracking-wide">Log In to Portal</span>
+                  </>
+                )}
+              </Button>
+            </form>
+          </Tabs>
+        </CardContent>
+        <CardFooter className="flex justify-center border-t border-slate-800/60 pt-6 text-xs text-slate-500 text-center">
           {activeTab === 'student' && (
             <p>Students can log in using their Name as username and Register Number as the password.</p>
           )}
@@ -167,8 +171,8 @@ const Login = () => {
           {activeTab === 'admin' && (
             <p>Admin credentials seeded during server setup.</p>
           )}
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
